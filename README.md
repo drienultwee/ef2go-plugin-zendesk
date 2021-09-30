@@ -4,12 +4,20 @@ Met behulp van "Vue CLI" is eenvoudig een development omgeving op te zetten zoda
 
 Deze Zendesk DEMO plugin is gebouwd met de volgende libraries: VueJS, VueX, Axios, Lodash, dayjs.
 
-Deze development omgeving draait standaard op localhost, poort 8081.
-
-Gebruik vervolgens https://localhost:8081/js/app.js als jouw Plugin JS url.
+De development omgeving draait standaard op localhost, poort 8081.
 
 SSL staat standaard aan (selfsigned certificate). Dit omdat http resources op https omgevingen standaard door de browser geblokkeert worden. (Mixed Content).
 
+In het EF2GO dashboard:
+
+Ga naar de ZENDESK plugin.
+Gebruik vervolgens https://localhost:8081/js/app.js als jouw Plugin JS url.
+
+Ga naar het Beheer - plugins. Vul bij de Plugin instellingen, de volgende instellingen aan:
+- token (API key van Zendesk)
+- zendeskurl (Subdomein van Zendesk)
+
+De benodigde settings, endpoints en headers van de plugin staan voor deze Zendesk DEMO al ingesteld.
 
 
 ## Development setup
