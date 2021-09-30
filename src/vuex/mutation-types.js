@@ -1,0 +1,10 @@
+export const ME = 'ME';
+export const REQUESTS = 'REQUESTS';
+export const REQUEST = 'REQUEST';
+export const REQUEST_COMMENTS = 'REQUEST_COMMENTS';
+export const TICKETS = 'TICKETS';
+export const TICKET = 'TICKET';
+export const TICKET_COMMENTS = 'TICKET_COMMENTS';
+export const USERS = 'USERS';
+export const REQUEST_CREATED = 'REQUEST_CREATED';
+export const CREATE_REQUEST = 'CREATE_REQUEST';

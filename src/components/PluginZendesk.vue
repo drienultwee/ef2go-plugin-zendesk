@@ -2,8 +2,9 @@
     <div class="row d-flex flex-row row">
         <div class="col-6">
 
-            <!--            <button type="button" class="btn btn-sm btn-primary" @click="$store.dispatch('fetchRequests', { plugin: plugin })">Test</button>-->
-            <!--            <button type="button" class="btn btn-sm btn-primary" @click="DEBUG = !DEBUG">Debug</button>-->
+<!--            <button type="button" class="btn btn-sm btn-primary" @click="$store.dispatch('fetchRequests', { plugin: plugin })">Test</button>-->
+<!--            <button type="button" class="btn btn-sm btn-primary" @click="DEBUG = !DEBUG">Debug</button>-->
+
             <div v-if="DEBUG">
                 <pre>{{ me }}</pre>
                 <pre>{{ shared }}</pre>
@@ -76,9 +77,9 @@
                         </div>
 
                         <div class="loading-dark loading-dark--double" v-if="is_loading.ticket_comments"></div>
-                        <div class="container" style="max-height: 300px; overflow-y: auto" id="js-ticket-comments" v-if="!is_loading.ticket_comments">
+                        <div class="container" style="max-height: 300px; overflow-y: auto" id="js-ticket-comments">
 
-                            <div class="row mb-15" v-for="comment in ticket_comments" :key="comment.id">
+                            <div class="row mb-15" v-for="comment in ticket_comments" :key="comment.id" v-if="!is_loading.ticket_comments">
                                 <div class="col-auto pl-0 pr-0">
                                     <figure>
                                         <img :src="gravatar(users.find(u => u.id === comment.author_id).email)" class="img-circle img-fluid" style="max-width: 40px;">
@@ -182,7 +183,7 @@
                     <!--                <button @click="react = !react" class="btn btn-sm btn-primary">Reageren</button>-->
                 </card>
                 <card v-if="request && !create_request">
-                    <reply></reply>
+                  <reply></reply>
                 </card>
 
 
@@ -194,7 +195,7 @@
             <card>
                 <h1>Relatie kaart</h1>
                 <p>In ontwikkeling</p>
-                <!--                <p>{{ ticket }}</p>-->
+<!--                <p>{{ ticket }}</p>-->
                 <p v-if="users.length > 0 && users.find(u => u.id === ticket.requester_id)">
                     <strong>Relatie</strong>: {{ users.find(u => u.id === ticket.requester_id).name }}
                     <br>
@@ -211,8 +212,8 @@
 <script>
 
 import { mapGetters } from 'vuex'
-import CreateRequest from "./components/CreateRequest";
-import Reply from "./components/Reply";
+import CreateRequest from "./CreateRequest";
+import Reply from "./Reply";
 
 export default {
     components: {CreateRequest, Reply},
