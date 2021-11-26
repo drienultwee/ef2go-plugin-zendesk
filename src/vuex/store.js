@@ -59,6 +59,8 @@ export default new Vuex.Store({
             commit(mutation.CREATE_REQUEST, { show })
         },
         async fetchMe({ commit }, { plugin }){
+            console.log('fetching me', plugin.apicaller);
+
             const result = await axios.post(plugin.apicaller, {
                 handle: 'users.me'
             });

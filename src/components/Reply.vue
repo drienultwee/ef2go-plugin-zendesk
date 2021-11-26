@@ -9,7 +9,8 @@
     </div>
 </template>
 <script>
-import { mapGetters } from 'vuex'
+import { mapGetters } from 'vuex';
+import { debounce as _debounce } from 'lodash';
 
 export default {
     data() {
@@ -90,9 +91,7 @@ export default {
         },
     },
     watch: {
-        'reply.body': _.debounce(function (newBody) {
-            console.log('debouncing');
-
+        'reply.body': _debounce(function () {
             localStorage.concept_comment = JSON.stringify(this.reply);
         }, 200),
     },

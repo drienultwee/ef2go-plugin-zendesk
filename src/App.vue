@@ -209,13 +209,17 @@
 </template>
 
 <script>
-
-import { mapGetters } from 'vuex'
+import { md5 } from "./utils/md5";
+import { mapGetters } from 'vuex';
 import CreateRequest from "./components/CreateRequest";
+import Alert from "./components/Alert";
+import Card from "./templates/Card";
 import Reply from "./components/Reply";
+import store from "./vuex/store";
 
 export default {
-    components: {CreateRequest, Reply},
+    store,
+    components: { CreateRequest, Reply, Alert, Card },
     data() {
         return {
             DEBUG: false,
@@ -250,7 +254,6 @@ export default {
         }
     },
     async mounted() {
-        // this.me = await this.getMe();
 
         this.is_loading.me = true;
         try {
@@ -259,7 +262,6 @@ export default {
             this.could_not_connect = true;
         }
         this.is_loading.me = false;
-
 
         console.log('this.me: ', this.me);
 
@@ -316,7 +318,7 @@ export default {
             }
         },
         gravatar(email = ''){
-            return 'https://secure.gravatar.com/avatar/'+window.hash.md5(email ?? '')+'?d=https%3A//assets.zendesk.com/images/2016/default-avatar-80.png&s=80&r=g';
+            return 'https://secure.gravatar.com/avatar/'+md5(email ?? '')+'?d=https%3A//assets.zendesk.com/images/2016/default-avatar-80.png&s=80&r=g';
         },
         async showTicket(ticket_id) {
             localStorage.plugins_zendesk_last_opened_ticket_id = JSON.stringify(ticket_id);

@@ -3,8 +3,9 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "serve": "vue-cli-service serve",
-    "build": "vue-cli-service build",
+    "serve": "webpack-dev-server --static=dist --port=1339 --open --https --mode=development",
+    "build": "vue-cli-service build --mode production --target lib --name ef2gopluginzendesk src/App.vue",
+    "watch": "vue-cli-service build --watch --mode development --target lib --name ef2gopluginzendesk src/App.vue",
     "lint": "vue-cli-service lint"
   },
   "dependencies": {
@@ -22,7 +23,9 @@
     "babel-eslint": "^10.1.0",
     "eslint": "^6.7.2",
     "eslint-plugin-vue": "^6.2.2",
-    "vue-template-compiler": "^2.6.11"
+    "vue-template-compiler": "^2.6.11",
+    "webpack-cli": "^4.9.1",
+    "webpack-dev-server": "^4.6.0"
   },
   "eslintConfig": {
     "root": true,
@@ -36,7 +39,9 @@
     "parserOptions": {
       "parser": "babel-eslint"
     },
-    "rules": {}
+    "rules": {
+      "no-unused-vars": "warn"
+    }
   },
   "browserslist": [
     "> 1%",

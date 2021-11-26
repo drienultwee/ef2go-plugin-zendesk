@@ -13,7 +13,7 @@
 
 </template>
 <script>
-
+import { debounce as _debounce } from 'lodash';
 import { mapGetters } from 'vuex'
 
 export default {
@@ -82,10 +82,10 @@ export default {
         ])
     },
     watch: {
-        'newticket.subject': _.debounce(function (newSubject) {
+        'newticket.subject': _debounce(function () {
             localStorage.concept_newticket = JSON.stringify(this.newticket);
         }, 200),
-        'newticket.body': _.debounce(function (newBody) {
+        'newticket.body': _debounce(function () {
             localStorage.concept_newticket = JSON.stringify(this.newticket);
         }, 200),
     }
