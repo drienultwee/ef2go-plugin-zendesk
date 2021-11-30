@@ -3,9 +3,9 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "serve": "webpack-dev-server --static=dist --port=1339 --open --https --mode=development",
-    "build": "vue-cli-service build --mode production --target lib --name ef2gopluginzendesk src/App.vue",
-    "watch": "vue-cli-service build --watch --mode development --target lib --name ef2gopluginzendesk src/App.vue",
+    "serve": "webpack serve --static=dist --entry=./src/index.js --port=1339 --open --https --mode=development",
+    "build": "vue-cli-service build --mode production --formats=umd-min --target lib --name ef2gopluginzendesk src/App.vue",
+    "watch": "vue-cli-service build --watch --mode development --formats=umd --target lib --name ef2gopluginzendesk src/App.vue",
     "lint": "vue-cli-service lint"
   },
   "dependencies": {
@@ -17,6 +17,7 @@
     "vuex": "^3.6.2"
   },
   "devDependencies": {
+    "@vue/cli": "^4.5.15",
     "@vue/cli-plugin-babel": "~4.5.0",
     "@vue/cli-plugin-eslint": "~4.5.0",
     "@vue/cli-service": "~4.5.0",

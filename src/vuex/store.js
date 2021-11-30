@@ -21,7 +21,7 @@ export default new Vuex.Store({
         ticket: null,
         ticket_comments: [],
         users: [],
-        plugin: window.shared.plugins.zendesk,
+        plugin: window.plugins.zendesk, // todo gp: maybe get this 'natively' by a commit or the root storage
     },
     mutations: {
         [mutation.CREATE_REQUEST](state, { show }){

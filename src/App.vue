@@ -1,6 +1,6 @@
 <template>
     <div class="row d-flex flex-row row">
-        <div class="col-6">
+        <div class="col">
 
             <!--            <button type="button" class="btn btn-sm btn-primary" @click="$store.dispatch('fetchRequests', { plugin: plugin })">Test</button>-->
             <!--            <button type="button" class="btn btn-sm btn-primary" @click="DEBUG = !DEBUG">Debug</button>-->
@@ -76,10 +76,10 @@
                         </div>
 
                         <div class="loading-dark loading-dark--double" v-if="is_loading.ticket_comments"></div>
-                        <div class="container" style="max-height: 300px; overflow-y: auto" id="js-ticket-comments" v-if="!is_loading.ticket_comments">
 
-                            <div class="row mb-15" v-for="comment in ticket_comments" :key="comment.id">
-                                <div class="col-auto pl-0 pr-0">
+                        <template v-if="!is_loading.ticket_comments">
+                            <div class="row mb-15" v-for="comment in ticket_comments" :key="comment.id" style="max-height: 300px; overflow-y: auto" id="js-ticket-comments">
+                                <div class="col-auto pr-0">
                                     <figure>
                                         <img :src="gravatar(users.find(u => u.id === comment.author_id).email)" class="img-circle img-fluid" style="max-width: 40px;">
                                     </figure>
@@ -90,8 +90,7 @@
                                     <hr>
                                 </div>
                             </div>
-
-                        </div>
+                        </template>
 
                         <!--                <pre>{{ ticket.description }}</pre>-->
                         <!--                <button @click="react = !react" class="btn btn-sm btn-primary">Reageren</button>-->
@@ -189,21 +188,21 @@
             </div>
 
         </div>
-        <div class="col-6" v-if="shared.current_user.role === 'efcustomer' && ticket">
+<!--        <div class="col-6" v-if="shared.current_user.role === 'efcustomer' && ticket">-->
 
-            <card>
-                <h1>Relatie kaart</h1>
-                <p>In ontwikkeling</p>
-                <!--                <p>{{ ticket }}</p>-->
-                <p v-if="users.length > 0 && users.find(u => u.id === ticket.requester_id)">
-                    <strong>Relatie</strong>: {{ users.find(u => u.id === ticket.requester_id).name }}
-                    <br>
-                    <strong>E-mail</strong>: {{ users.find(u => u.id === ticket.requester_id).email }}
-                    <br>
-                </p>
-            </card>
+<!--            <card>-->
+<!--                <h1>Relatie kaart</h1>-->
+<!--                <p>In ontwikkeling</p>-->
+<!--                &lt;!&ndash;                <p>{{ ticket }}</p>&ndash;&gt;-->
+<!--                <p v-if="users.length > 0 && users.find(u => u.id === ticket.requester_id)">-->
+<!--                    <strong>Relatie</strong>: {{ users.find(u => u.id === ticket.requester_id).name }}-->
+<!--                    <br>-->
+<!--                    <strong>E-mail</strong>: {{ users.find(u => u.id === ticket.requester_id).email }}-->
+<!--                    <br>-->
+<!--                </p>-->
+<!--            </card>-->
 
-        </div>
+<!--        </div>-->
     </div>
 
 </template>
@@ -216,6 +215,7 @@ import Alert from "./components/Alert";
 import Card from "./templates/Card";
 import Reply from "./components/Reply";
 import store from "./vuex/store";
+import * as dayjs from 'dayjs'
 
 export default {
     store,
@@ -259,6 +259,9 @@ export default {
         try {
             await this.$store.dispatch('fetchMe', { plugin: this.plugin });
         } catch(ex) {
+
+            console.log('we got connection exception', ex);
+
             this.could_not_connect = true;
         }
         this.is_loading.me = false;
@@ -304,10 +307,10 @@ export default {
     },
     filters: {
         date(date, format = 'D-M-YYYY') {
-            return window.dayjs(date).format(format);
+            return dayjs(date).format(format);
         },
         datetime(date, format = 'D-M-YYYY HH:mm:ss'){
-            return window.dayjs(date).format(format);
+            return dayjs(date).format(format);
         }
     },
     methods: {
@@ -318,7 +321,7 @@ export default {
             }
         },
         gravatar(email = ''){
-            return 'https://secure.gravatar.com/avatar/'+md5(email ?? '')+'?d=https%3A//assets.zendesk.com/images/2016/default-avatar-80.png&s=80&r=g';
+            return 'https://secure.gravatar.com/avatar/'+md5(email ?? '')+'?d=mp';
         },
         async showTicket(ticket_id) {
             localStorage.plugins_zendesk_last_opened_ticket_id = JSON.stringify(ticket_id);
@@ -368,7 +371,7 @@ export default {
             });
         },
         zendeskTicketUrl(ticket){
-            console.log(ticket);
+            console.log('zendesk tickt url', this.plugin);
             return 'https://'+this.plugin.settings.zendeskurl + '.zendesk.com/agent/tickets/'+ticket.id;
         }
 
