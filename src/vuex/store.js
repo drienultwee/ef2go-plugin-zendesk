@@ -3,6 +3,7 @@ import Vuex from 'vuex'
 import axios from 'axios';
 
 import * as mutation from './mutation-types';
+import {COMMTYPE_EMAIL} from "../enums/commtype";
 
 Vue.use(Vuex);
 
@@ -13,7 +14,8 @@ export default new Vuex.Store({
             verified: null,
             role: null
         },
-        create_request: false,
+        is_creating_request: false,
+        is_creating_ticket: false,
         request: null,
         request_comments: [],
         requests: [],
@@ -21,11 +23,27 @@ export default new Vuex.Store({
         ticket: null,
         ticket_comments: [],
         users: [],
-        plugin: window.plugins.zendesk, // todo gp: maybe get this 'natively' by a commit or the root storage
+        requester: null,
+        plugin: window.plugins.zendesk, // todo gp: maybe get this 'natively' by a commit or the root storage,
+        shared: window.shared,
+        public_js_variables: window.public_js_variables,
+        warnings: [],
     },
     mutations: {
+        isCreatingTicket(state, { show }){
+            state.is_creating_ticket = show;
+        },
+        setIsCreatingRequest(state, show){
+            state.is_creating_request = show;
+        },
+        addWarning(state, { warning }){
+            state.warnings.push(warning);
+        },
+        setWarnings(state, { warnings}){
+            state.warnings = warnings;
+        },
         [mutation.CREATE_REQUEST](state, { show }){
-            state.create_request = show;
+            state.is_creating_request = show;
         },
         [mutation.ME](state, { me }) {
             state.me = me;
@@ -58,6 +76,12 @@ export default new Vuex.Store({
         toggleCreateRequest({ commit }, { show }){
             commit(mutation.CREATE_REQUEST, { show })
         },
+        toggleIsCreatingTicket({ commit }, { show }){
+            commit('isCreatingTicket', { show })
+        },
+        setIsCreatingRequest({ commit }, show){
+            commit('setIsCreatingRequest', show);
+        },
         async fetchMe({ commit }, { plugin }){
             console.log('fetching me', plugin.apicaller);
 
@@ -78,8 +102,6 @@ export default new Vuex.Store({
             commit(mutation.REQUEST, { request: result.data.request });
         },
         async fetchRequests({ state, commit }) {
-            // todo gp refactor plugin from state in rest of app, instead of passed in var
-            console.log('state.plugin: ', state.plugin);
 
             const result = await axios.post(state.plugin.apicaller, {
                 handle: 'requests'
@@ -89,17 +111,53 @@ export default new Vuex.Store({
 
             commit(mutation.REQUESTS, { requests: result.data.requests })
         },
-        async fetchTickets({ commit }, { plugin }) {
+        async fetchTicketsForRelation({ state, commit }, { plugin }) {
 
-            const result = await axios.post(plugin.apicaller, {
+            commit('setWarnings', { warnings: []});
+
+            // get mail addresses associated with relation
+            const mailaddresses = state.shared.relation.rl_bedrijfsgegevens_communicatie.item.filter(comm => comm.rl_bedrijfsgegevens_commtype === COMMTYPE_EMAIL);
+
+            if(mailaddresses.length === 0) {
+                commit('addWarning', { warning: { message: 'Er is geen e-mailadres bekend bij deze relatie' } });
+
+                return ;
+            }
+
+            // get zendesk user id by relations mail address
+            const email = mailaddresses[0].rl_bedrijfsgegevens_commwaarde;
+
+            const zendeskRequesters = await axios.post(plugin.apicaller, {
+                handle: 'search.users.by.email',
+                params: {
+                    email,
+                }
+            });
+
+            if(zendeskRequesters.data.count === 0) {
+                commit('addWarning', { warning: { message: 'E-mailadres '+ email + ' is niet bekend bij zendesk.'} });
+
+                return ;
+            }
+
+            const results = await axios.post(plugin.apicaller, {
+                handle: 'users.tickets.requested',
+                params: {
+                    user_id: zendeskRequesters.data.results[0].id
+                }
+            });
+
+            commit(mutation.TICKETS, { tickets: results.data.tickets })
+
+        },
+        async fetchTickets({ commit }, { plugin }) {
+            commit('setWarnings', { warnings: []});
+
+            const results = await axios.post(plugin.apicaller, {
                 handle: 'tickets'
             });
 
-            console.log(result.data);
-            console.log('latest tickets: ', result.data.tickets);
-
-            commit(mutation.TICKETS, { tickets: result.data.tickets })
-            // this.tickets = result.data.tickets;
+            commit(mutation.TICKETS, { tickets: results.data.tickets })
         },
         async fetchTicket({ commit }, { ticket_id, plugin }) {
             const result = await axios.post(plugin.apicaller, {
@@ -191,30 +249,25 @@ export default new Vuex.Store({
                 },
             });
 
-            // this.users = result.data.users;
             commit(mutation.USERS, { users: result.data.users });
-
-            // this.request_comments = result.data.comments;
             commit(mutation.REQUEST_COMMENTS, { request_comments: result.data.comments });
         },
 
     },
     getters: {
-        create_request: state => state.create_request,
+        is_creating_request: state => state.is_creating_request,
+        is_creating_ticket: state => state.is_creating_ticket,
         me: state => state.me,
         request: state => state.request,
         request_comments: state => state.request_comments,
         requests: state => state.requests,
-        plugin: state => {
-            return state.plugin;
-        },
+        plugin: state => state.plugin,
         ticket: state => state.ticket,
         ticket_comments: state => state.ticket_comments,
         tickets: state => state.tickets,
         users: state => state.users,
-        shared: () => {
-            return window.public_js_variables;
-        }
+        shared: state => state.shared,
+        public_js_variables: state => state.public_js_variables,
     }
 
 });
