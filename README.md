@@ -19,6 +19,15 @@ Ga naar het Beheer - plugins. Vul bij de Plugin instellingen, de volgende instel
 
 De benodigde settings, endpoints en headers van de plugin staan voor deze Zendesk DEMO al ingesteld.
 
+## Zendesk API keys
+Ga naar:
+```
+https://<uw-zendesk>.zendesk.com/admin/home
+```
+Klik door naar
+```
+Apps en integraties --> API's - Zendesk-API
+```
 
 ## Development setup
 
